@@ -31,24 +31,20 @@ Quebit is currently deployed at an intersection in Stellenbosch where we are col
 ## Camera dataset
 At the site where we are collecting data, we have four FLIR cameras deployed. Car counts are streamed over websockets and saved to a database on AWS. The setup looks like this:
 <div align="center">
-  <div style="display: flex; flex-wrap: wrap; justify-content: center;">
-    <figure style="margin: 10px;">
-      <img src="resources/sb.jpeg" width="200" alt="Screenshot 1">
-      <figcaption>Stellenbosch | IP: 172.30.15.52</figcaption>
+  <div >
+    <figure class="image">
+      <img src="resources/sb.jpeg" width="300" alt="Screenshot 1">
     </figure>
-    <figure style="margin: 10px;">
-      <img src="resources/bk.jpeg" width="200" alt="Screenshot 2">
-      <figcaption>Blaauwklippen | IP: 172.30.15.53</figcaption>
+    <figure class="image">
+      <img src="resources/bk.jpeg" width="300" alt="Screenshot 2">
     </figure>
   </div>
-  <div style="display: flex; flex-wrap: wrap; justify-content: center;">
-    <figure style="margin: 10px;">
-      <img src="resources/tp.jpeg" width="200" alt="Screenshot 3">
-      <figcaption>Technopark | IP: 172.30.15.54</figcaption>
+  <div >
+    <figure sclass="image"">
+      <img src="resources/tp.jpeg" width="300" alt="Screenshot 3">
     </figure>
-    <figure style="margin: 10px;">
-      <img src="resources/sw.jpeg" width="200" alt="Screenshot 4">
-      <figcaption>Somerset West | IP: 172.30.15.55</figcaption>
+    <figure class="image">
+      <img src="resources/sw.jpeg" width="300" alt="Screenshot 4">
     </figure>
   </div>
 </div>
