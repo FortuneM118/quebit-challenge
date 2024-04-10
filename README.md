@@ -33,21 +33,21 @@ At the site where we are collecting data, we have four FLIR cameras deployed. Ca
 <div align="center">
   <div style="display: flex; flex-wrap: wrap; justify-content: center;">
     <figure style="margin: 10px;">
-      <img src="resources/sb.jpeg" width="400" alt="Screenshot 1">
+      <img src="resources/sb.jpeg" width="200" alt="Screenshot 1">
       <figcaption>Stellenbosch | IP: 172.30.15.52</figcaption>
     </figure>
     <figure style="margin: 10px;">
-      <img src="resources/bk.jpeg" width="400" alt="Screenshot 2">
+      <img src="resources/bk.jpeg" width="200" alt="Screenshot 2">
       <figcaption>Blaauwklippen | IP: 172.30.15.53</figcaption>
     </figure>
   </div>
   <div style="display: flex; flex-wrap: wrap; justify-content: center;">
     <figure style="margin: 10px;">
-      <img src="resources/tp.jpeg" width="400" alt="Screenshot 3">
+      <img src="resources/tp.jpeg" width="200" alt="Screenshot 3">
       <figcaption>Technopark | IP: 172.30.15.54</figcaption>
     </figure>
     <figure style="margin: 10px;">
-      <img src="resources/sw.jpeg" width="400" alt="Screenshot 4">
+      <img src="resources/sw.jpeg" width="200" alt="Screenshot 4">
       <figcaption>Somerset West | IP: 172.30.15.55</figcaption>
     </figure>
   </div>
