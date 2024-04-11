@@ -3,33 +3,61 @@
 <img src="resources/quebit.png" alt="Quebit Logo" class="center"/>
 </p>
 
-# Background
-Quebit is a subsidiary of Bytefuse that focuses on transport and traffic light optimization. As our solutions are data-driven, we are gathering large amounts of data and need skilled data engineers and data analysts to build the required pipelines to manage, process, and extract insights from datasets. The purpose of this challenge is to evaluate programming skills for candidate Quebit Data Scientists and Data Engineers.
+# Introduction
 
-# What we are looking for
-- We mainly use Python at Quebit, so please complete the assignment in Python.
-- You can use any Python package during this challenge (e.g., pandas, numpy, etc.).
-- We are looking for candidates who can work in a structured manner and use versioning in a way to easily roll back when breaking changes are introduced. So, structure your code in logical directories and files to make it easy for the reviewer to read.
-- As you complete the challenge, make sure to document functions as well as use descriptive messages for commit messages.
-- We value readability over fewer lines of code.
-- Query and process data in a logical and efficient manner.
-- Provide good statistical insights when describing results and graphs obtained during the challenge.
-- Provide clear instructions in your final submission on how to install and run your code. Your submission can either be in the form of a Jupyter Notebook or Python script, but everything should run by following the instructions. Remember to include the version of Python that should be used to run your code.
+## Who we are
+
+Quebit is a subsidiary of Bytefuse that specializes in transport and traffic light optimization. Our solutions are data-driven, and we continually gather substantial amounts of traffic data. As a result, we are seeking skilled data engineers and analysts to construct and maintain pipelines for managing, processing, and extracting insights from this data.
+
+## Purpose of this challenge
+
+The purpose of this challenge is to assess the programming skills of prospective Quebit Data Scientists and Engineers.
+
+# Challenge overview & requirements
+
+When completing this assignment, please adhere to the requirements listed below.
+
+- **Use Python**: Please complete the assignment using Python, as it is the primary language used at Quebit.
+
+- **Utilize Python Packages**: Feel free to leverage any Python package (e.g., pandas, numpy, etc.) during this challenge.
+
+- **Structured Approach**: We seek candidates who can work in a structured manner and utilize version control effectively to allow easy rollback in case of breaking changes. Therefore, you should organize your code into logical directories and files to facilitate readability for reviewers.
+
+- **Documentation and Commit Messages**: Document your functions thoroughly and use descriptive commit messages throughout the completion of the challenge.
+
+- **Prioritize Readability**: We prioritize code readability over conciseness. Hence, feel free to use verbose variable and function names since most IDEs have autocomplete capabilities.
+
+- **Logical and Efficient Data Handling**: Ensure that your code queries and processes data in a logical and efficient manner.
+
+- **Statistical Insights**: Provide insightful descriptions of the results and graphs obtained during the challenge. That is, your solutions should contain explanations of all results produced.
+
+- **Clear Instructions for Execution**: Include clear instructions in your final submission on how to install and run your code. Your submission can be in the form of a Jupyter Notebook or a Python script, but it should be executable by following the provided instructions. Specify the version of Python required to run your code. Note the use of `pip freeze` or `pipreqs` for generating a .txt file containing the requirements for executing your code.
 
 
-# How to submit
-- The easiest way is to create a fork of this repo on Github and clone it.
-- If you are not using Github, please make sure to host your repo somewhere where we can easily access it.
-- Work on the challenge, committing regularly to document your progress. Try to have structured, meaningful commits, where each one adds significant functionality in a coherent manner.
-- When you are done, email us a link to your repo. Email: cobus.louw@bytefuse.ai
+# Submitting your solutions
 
-**Be sure to watch the repo for bug fixes**
+
+- **GitHub Submission**:
+The easiest method is to fork this repository on GitHub and then clone it to your local machine.
+- **Non-GitHub Submission**:
+If you are not using GitHub, please ensure that your repository is hosted in a location where we can easily access it.
+- **Work on the Challenge**:
+Throughout the challenge, commit regularly to document your progress. Strive for structured, meaningful commits, with each one adding functionality in a coherent manner. Where possible, aim to keep individual commits small and concise, and try to break up your solutions into several small commits.
+- **Submission Link**:
+Once you have completed the challenge, email us a link to your repository at: cobus.louw@bytefuse.ai.
+
+<span style="color: red;">NOTE: </span> **Be sure to watch the repo for bug fixes**
 
 # Challenge
-Quebit is currently deployed at an intersection in Stellenbosch where we are collecting traffic data. In this task, we would like you to extract various insights from the data as well as process the data to run a short simulation at the end of the challenge.
 
-## Camera dataset
-At the site where we are collecting data, we have four FLIR cameras deployed. Car counts are streamed over websockets and saved to a database on AWS. The setup looks like this:
+Quebit is currently deployed at an intersection in Stellenbosch, where we are collecting traffic data. For this task, we would like you to extract various insights from the data and process it to run a short simulation by the end of the challenge.
+
+## Background
+
+### Camera dataset
+
+We have four FLIR cameras deployed at our data-collection site. Vehicle counts are streamed over websockets and stored in a database on AWS. The figures below illustrate the setup.
+
 <div align="center">
   <div >
     <figure class="image">
@@ -48,7 +76,8 @@ At the site where we are collecting data, we have four FLIR cameras deployed. Ca
     </figure>
   </div>
 </div>
-The counting zones are strategically placed to count the different turning movements at the intersection. There are 12 turning movements we want to track:
+
+The counting zones (red boxes in the above figures) are strategically placed to count the different turning movements at the intersection. There are 12 turning movements we want to track:
 
 ```
 stellenbosch_to_blaauwklippen
@@ -109,9 +138,12 @@ The following YAML allows us to map the detection zones of each camera to a turn
     "8": "somersetwest_to_technopark"
 ```
 
-## Traffic controller dataset
-We are also integrated with the traffic light controller at the site. As the name suggests, the controller is responsible for controlling the traffic light. This is done by serving stages based on demand and extending stages to clear queues. A stage basically defines the permutation of lights that are green and red when it is served. The most important thing to know is that different stages serve different turning movements.
-The following stages are defined at the site:
+### Traffic controller dataset
+
+We are integrated with the traffic light controller at the site. As the name suggests, the controller is responsible for controlling the traffic light, which entails serving stages based on demand as well as extending stages to clear vehicle queues. Each stage defines a unique permutation of red and green lights corresponding to different turning movements.
+
+The following stages are currently defined at the site:
+
 
 <div align="center">
   <div style="display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 5px; width: 70%">
@@ -135,7 +167,8 @@ The following stages are defined at the site:
     </figure>
   </div>
 </div>
-The following yaml defines which turning movements are served by each stage:
+
+The YAML below defines the turning movements that are served by each of the above stages:
 
 ```yaml
 stage_route_map:
@@ -179,45 +212,70 @@ stage_route_map:
     - "technopark_to_stellenbosch"
 # technopark_to_stellenbosch is "served" by every stage as these vehicles use a slip and do not cross the intersection
 ```
+---
 
-## 1. Query data from s3
-Dumps of both the camera vehicle counts dataset as well as the controller's dataset have been uploaded to a public bucket on S3. The vehicle counts dataset can be found here: `s3://quebit-challenge/vehicle_counts.json` and the controller's dataset can be found here: `s3://quebit-challenge/controller.json`. You only have to work with data from `2024-03-08T17:00:00+02:00` to `2024-03-08T18:00:00+02:00`. Both `.json` files are large, and you should avoid downloading the entire file. It is therefore advisable to only query the required subset. Have a look at AWS's `SELECT` method to accomplish this task.
+## Challenge Questions/Problems
 
-### 1.1 Query vehicle counts
-Let's start by querying the vehicle dataset for vehicle counts for the previously defined period as well as for a subset of detection zones. Remember that some turning movements are counted by multiple cameras and detection zones. You can therefore **ignore** the following detection zones from each camera.
+### 1. Query data from s3
 
-172.30.15.52: 5, 6
+Dumps of both the camera vehicle counts dataset and the controller's dataset have been uploaded to a public bucket on S3. 
 
-172.30.15.53: 1, 2, 3, 8
+The vehicle counts dataset is available at the following address: 
 
-172.30.15.54: 3, 4, 5, 6
+<span style="color: blue;"> s3://quebit-challenge/vehicle_counts.json </span>
 
-172.30.15.55: 7, 8
+The controller's dataset is available at the following address:
+
+<span style="color: blue;"> s3://quebit-challenge/controller.json</span>
+
+You need only use the data in the following timeframe: 
+Start: `2024-03-08T17:00:00+02:00` End: `2024-03-08T18:00:00+02:00`
+
+Both of these `.json` files are large, so it's recommended to query only the required subset. Consider using the AWS `SELECT` method to accomplish this task.
+
+
+#### 1.1. Query vehicle counts
+Let's start by querying the vehicle dataset for vehicle counts over the previously specified timeframe as well as for a subset of the detection zones. Remember that some turning movements are counted by multiple cameras and detection zones. The table below specifies which detection zones may be ignored for each of the cameras:
+
+
+| Camera IP Address | Zones to ignore |
+|---------------|-------------|
+| 172.30.15.52  | 5, 6        |
+| 172.30.15.53  | 1, 2, 3, 8  |
+| 172.30.15.54  | 3, 4, 5, 6  |
+| 172.30.15.55  | 7, 8        |
+
 
 Only select rows within the specified time frame - `2024-03-08T17:00:00+02:00` to `2024-03-08T18:00:00+02:00`. Use the `time` column to make a selection based on time. The time format here is [ISO_8601](https://en.wikipedia.org/?title=ISO_8601).
 
-### 1.2 Query stage informations
-Query the `controller.json` file for information regarding stage changes. Rows where the `oid` column has a value of `3.6.1.4.1.13267.3.2.5.1.1.3` contains information regarding stage selections. Again only select information within the specified time frame. Use the `timestamp` column to select rows based time. Keep in mind that the format here is [Unix time](https://en.wikipedia.org/wiki/Unix_time).
+#### 1.2. Query stage informations
+Query the `controller.json` file for information regarding stage changes. Rows where the `oid` column have a value of `3.6.1.4.1.13267.3.2.5.1.1.3` contain information regarding stage selections. Again select only information within the specified timeframe. Use the `timestamp` column to select rows based time. Keep in mind that the format here is [Unix time](https://en.wikipedia.org/wiki/Unix_time).
 
 
-## 2. Data processing and analysis
+### 2. Data processing and analysis
 
-### 2.1 Vehicle counts
+#### 2.1. Vehicle counts
+
 - Create a bar plot of the total volume of cars served for each turning movement
-- Create a rolling mean line plot of 30 second throughput for each turning movement
-- Create a visualisation to get insight of the gap time distribution. The gap time is the time in between consecutive vehicle counts.
+- Create a rolling mean line plot of 30-second throughput for each turning movement. Here, throughput refers to the number of vehicles passing through the intersection.
+- Construct a suitable visual to provide insight on the gap time distribution. Here, gap time refers to the time between consecutive vehicle counts.
 
-### 2.2 Traffic light visualisation
-- Visualise the distribution of green time extensions for each stage. Report and describe the distributions.
-- Create a transistion matrix to show often traffic light switched from one stage to another.
+#### 2.2. Traffic light visualization
 
-### 2.3 Vehicle counts and traffic light stages joined
-- Find a way to join staging data to the vehicle count dataset. The new dataframe should assign a stage to each vehicle counted. It therefore should show what stage was served when the vehicle was counted.
-- Stage 2 and stage 4 served both vehicles from Somerset West to Technopark. Which stage served the most vehicles? Which stage had the highest vehicle rate.
-- Vehicles should only cross the intersection during the designated stage assigned to the vehicle's turning movement. Report on trips (vehicle counts) that were counted within invalid periods i.e. their route wasn't served when they crossed the intersection. What route and stage had the most invalid trips?
-- Report on green time utilisaton. Which stage had the longest duration where no cars were served and what was the duration.
+- Visualize the distribution of green time extensions for each stage. Report and describe these distributions.
+- Create a transition matrix to showcase the frequency at which the traffic light switched from one stage to another. After obtaining the transition matrix, use this matrix to construct a heatmap of the stage transitions.
+
+#### 2.3 Vehicle counts and traffic light stages joined
+
+- Implement a suitable method to combine (join) staging data with the vehicle count dataset. The resulting dataframe should assign a stage to each counted vehicle, indicating the stage that was active when the vehicle was observed.
+
+- Both Stage 2 and Stage 4 served vehicles traveling from Somerset West to Technopark. Determine which stage served the most vehicles and which stage had the highest vehicle rate.
+
+- Vehicles should only traverse the intersection during the designated stage corresponding to their turning movement. Identify trips (vehicle counts) recorded outside of valid periods, where the vehicle's route was not served during intersection crossing. That is, an invalid trip occurs when a vehicle passes through the intersection when it's route is not being served (e.g. vehicles driving over red lights). Report on the route and stage with the highest number of invalid trips.
+
+- Analyze green time utilization. Identify the stage with the longest duration during which no vehicles were served, and report the duration of this period.
 
 
-## 3. Create a simulation based on vehicle counts and traffic light stage data (bonus question)
+### 3. Create a simulation based on vehicle counts and traffic light stage data (bonus question)
    
 In this question you are going to create a digital twin of the scenario using the provided dataset. We've already provided the simulation and dependencies. You need to create two `.xml` files. The first will be responsible for generating traffic within the simulation. The second `.xml` file is going to dictate the stage of the traffic light... 
