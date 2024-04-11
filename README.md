@@ -28,6 +28,9 @@ Quebit is a subsidiary of Bytefuse that focuses on transport and traffic light o
 # Challenge
 Quebit is currently deployed at an intersection in Stellenbosch where we are collecting traffic data. In this task, we would like you to extract various insights from the data as well as process the data to run a short simulation at the end of the challenge.
 
+## Database
+You can connect to the database using a tool like DBeaver or SQLConnect or any other tool of your choice. Use the tool to inspect the structure of the database and the tables in the database. Using Python and the Peewee Python package create database models that represent the structure of the database tables. Use these models to read and manupulate the data to complete the tasks below. Avoid typing out RAW SQL queries in your code. 
+
 ## Camera dataset
 At the site where we are collecting data, we have four FLIR cameras deployed. Car counts are streamed over websockets and saved to a database on AWS. The setup looks like this:
 <div align="center">
@@ -53,12 +56,8 @@ At the site where we are collecting data, we have four FLIR cameras deployed. Ca
   </div>
 </div>
 
-Here is an example of the structure of the data:
-| id                                  | camera_ip    | site_id              | site_name  | classification | confidence | dataNumber | detectorZone | entryFrameCounter | exitFrameCounter | gapTime | length | messageType | sequenceNr | speed | time                     | dtype         |
-|-------------------------------------|--------------|----------------------|------------|----------------|------------|------------|--------------|-------------------|------------------|---------|--------|--------------|------------|-------|--------------------------|---------------|
-| 2c066e08-f058-4e4d-a27d-0c19a7516090| 172.30.15.55| 51.51.50.48.57.54    | Technopark | 1              | 2.0        | 216044     | 3            | 35677020          | 35677046         | 152.0   | 60.0   | Data         | 192280     | 42.0  | 2024-03-08 00:00:00.097  | IndividualData|
-| 4b50eb35-9f6b-4f30-896a-7cb607f3a6e6| 172.30.15.55| 51.51.50.48.57.54    | Technopark | 1              | 9.0        | 216045     | 4            | 35677064          | 35677086         | 162.0   | 55.0   | Data         | 192281     | 44.0  | 2024-03-08 00:00:00.896  | IndividualData|
-| d7a2eb4b-daf3-4db5-ab08-c5739a38dbb1| 172.30.15.54| 51.51.50.48.57.54    | Technopark | 1              | 4.0        | 103922     | 1            | 39184264          | 39184292         | 46.0    | 60.0   | Data         | 77866      | 38.0  | 2024-03-08 00:00:03.225  | IndividualData|
+
+
 
 
 The counting zones are strategically placed to count the different turning movements at the intersection. There are 12 turning movements we want to track:
