@@ -23,7 +23,7 @@ Quebit is a subsidiary of Bytefuse that focuses on transport and traffic light o
 - Work on the challenge, committing regularly to document your progress. Try to have structured, meaningful commits, where each one adds significant functionality in a coherent manner.
 - When you are done, email us a link to your repo. Email: cobus.louw@bytefuse.ai
 
-**Be sure to watch the repo for bug fixes**
+**Be sure to watch the repo for bug fixes** :bug:
 
 # Challenge
 Quebit is currently deployed at an intersection in Stellenbosch where we are collecting traffic data. In this task, we would like you to extract various insights from the data as well as process the data to run a short simulation at the end of the challenge.
@@ -34,24 +34,33 @@ At the site where we are collecting data, we have four FLIR cameras deployed. Ca
   <div style="display: flex; flex-wrap: wrap; justify-content: center;">
     <figure style="margin: 10px;">
       <img src="resources/sb.jpeg" width="200" alt="Screenshot 1">
-      <figcaption>Stellenbosch | IP: 172.30.15.52</figcaption>
+      <!-- <figcaption>Stellenbosch | IP: 172.30.15.52</figcaption> -->
     </figure>
     <figure style="margin: 10px;">
       <img src="resources/bk.jpeg" width="200" alt="Screenshot 2">
-      <figcaption>Blaauwklippen | IP: 172.30.15.53</figcaption>
+      <!-- <figcaption>Blaauwklippen | IP: 172.30.15.53</figcaption> -->
     </figure>
   </div>
   <div style="display: flex; flex-wrap: wrap; justify-content: center;">
     <figure style="margin: 10px;">
       <img src="resources/tp.jpeg" width="200" alt="Screenshot 3">
-      <figcaption>Technopark | IP: 172.30.15.54</figcaption>
+      <!-- <figcaption>Technopark | IP: 172.30.15.54</figcaption> -->
     </figure>
     <figure style="margin: 10px;">
       <img src="resources/sw.jpeg" width="200" alt="Screenshot 4">
-      <figcaption>Somerset West | IP: 172.30.15.55</figcaption>
+      <!-- <figcaption>Somerset West | IP: 172.30.15.55</figcaption> -->
     </figure>
   </div>
 </div>
+
+Here is an example of the structure of the data:
+| id                                  | camera_ip    | site_id              | site_name  | classification | confidence | dataNumber | detectorZone | entryFrameCounter | exitFrameCounter | gapTime | length | messageType | sequenceNr | speed | time                     | dtype         |
+|-------------------------------------|--------------|----------------------|------------|----------------|------------|------------|--------------|-------------------|------------------|---------|--------|--------------|------------|-------|--------------------------|---------------|
+| 2c066e08-f058-4e4d-a27d-0c19a7516090| 172.30.15.55| 51.51.50.48.57.54    | Technopark | 1              | 2.0        | 216044     | 3            | 35677020          | 35677046         | 152.0   | 60.0   | Data         | 192280     | 42.0  | 2024-03-08 00:00:00.097  | IndividualData|
+| 4b50eb35-9f6b-4f30-896a-7cb607f3a6e6| 172.30.15.55| 51.51.50.48.57.54    | Technopark | 1              | 9.0        | 216045     | 4            | 35677064          | 35677086         | 162.0   | 55.0   | Data         | 192281     | 44.0  | 2024-03-08 00:00:00.896  | IndividualData|
+| d7a2eb4b-daf3-4db5-ab08-c5739a38dbb1| 172.30.15.54| 51.51.50.48.57.54    | Technopark | 1              | 4.0        | 103922     | 1            | 39184264          | 39184292         | 46.0    | 60.0   | Data         | 77866      | 38.0  | 2024-03-08 00:00:03.225  | IndividualData|
+
+
 The counting zones are strategically placed to count the different turning movements at the intersection. There are 12 turning movements we want to track:
 
 ```
