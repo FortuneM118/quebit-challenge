@@ -37,26 +37,29 @@ When completing this assignment, please adhere to the requirements listed below.
 # Submitting your solutions
 
 
-- **GitHub Submission**:
+- **GitHub submission**:
 The easiest method is to fork this repository on GitHub and then clone it to your local machine.
-- **Non-GitHub Submission**:
+- **Non-GitHub aubmission**:
 If you are not using GitHub, please ensure that your repository is hosted in a location where we can easily access it.
-- **Work on the Challenge**:
+- **Work on the ahallenge**:
 Throughout the challenge, commit regularly to document your progress. Strive for structured, meaningful commits, with each one adding functionality in a coherent manner. Where possible, aim to keep individual commits small and concise, and try to break up your solutions into several small commits.
-- **Submission Link**:
+- **Submission link**:
 Once you have completed the challenge, email us a link to your repository at: cobus.louw@bytefuse.ai.
 
 <span style="color: red;">NOTE: </span> **Be sure to watch the repo for bug fixes**
 
 # Challenge
 
-Quebit is currently deployed at an intersection in Stellenbosch, where we are collecting traffic data. For this task, we would like you to extract various insights from the data and process it to run a short simulation by the end of the challenge.
+Quebit is currently deployed at an intersection in Stellenbosch, where we are collecting traffic data. For this task, we would like you to extract various insights from the data.
 
 ## Background
 
-### Camera dataset
+## Database
+A sample dataset has been uploaded to a database on AWS. We will email you the information to connect to the DB. The database is readonly and you should not attempt to write to the database. You can connect to the database using a tool like DBeaver or SQLConnect or any other tool of your choice. Use the tool to inspect the structure of the database and the tables in the database. Using Python and the Peewee Python package create database models that represent the structure of the database tables. Use these models to read and manupulate the data to complete the tasks below. Avoid typing out RAW SQL queries in your code. More background on the data follows in the next two sections.  
 
-We have four FLIR cameras deployed at our data-collection site. Vehicle counts are streamed over websockets and stored in a database on AWS. The figures below illustrate the setup.
+### Cameras
+
+We have four FLIR cameras deployed at our data-collection site. These are mainly used for detecting vehicles. Vehicle counts are streamed over websockets and stored in the database in the `individual_data` table. The figures below illustrate the setup at the site.
 
 <div align="center">
   <div style="display: flex; flex-wrap: wrap; justify-content: center;">
@@ -82,11 +85,9 @@ We have four FLIR cameras deployed at our data-collection site. Vehicle counts a
 </div>
 
 
+Counting zones are strategically placed to count the different turning movements at the intersection. Each row in this table represents a vehicle that was counted. The `detectorZone` column indicate the zone number where the vehicle was counted and the `time` column can be used to get the timestamp for when the count was made. Note that the counts of all 4 cameras are combined in this one table. 
 
-
-
-The counting zones are strategically placed to count the different turning movements at the intersection. There are 12 turning movements we want to track:
-
+There are 12 turning movements we want to track:
 The counting zones (red boxes in the above figures) are strategically placed to count the different turning movements at the intersection. There are 12 turning movements we want to track:
 
 ```
@@ -108,7 +109,7 @@ technopark_to_somersetwest
 ```
 
 
-The following YAML allows us to map the detection zones of each camera to a turning movement. Be aware that some turning movements are counted by multiple detection zones/cameras.
+The following YAML allows us to map the detector zones of each camera to a turning movement. Be aware that some turning movements are counted by multiple detection zones/cameras.
 
 ```yaml
 172.30.15.52:
@@ -148,13 +149,13 @@ The following YAML allows us to map the detection zones of each camera to a turn
     "8": "somersetwest_to_technopark"
 ```
 
+There are various other fields in this table. Use your Database tool or ORM to explore these.
+
 ### Traffic controller dataset
 
 We are integrated with the traffic light controller at the site. As the name suggests, the controller is responsible for controlling the traffic light, which entails serving stages based on demand as well as extending stages to clear vehicle queues. Each stage defines a unique permutation of red and green lights corresponding to different turning movements.
 
 The following stages are currently defined at the site:
-
-
 <div align="center">
   <div style="display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 5px; width: 70%">
     <figure style="margin: 0;">
@@ -224,29 +225,19 @@ stage_route_map:
 ```
 ---
 
+Information from the traffic light is streamed using a SNMP Trap. The stream contains a variety of different messages. This includes when the traffic light changed its stage, detector faults, detector readings etc. Data regarding the traffic light are located in the `trap_table`. A few important things to note:
+
+- There are actually two traffic lights at this site. A main traffic light with `stream_site_id=51.51.50.48.57.54` and a secondary traffic light that controls a pedestrian crossing with `stream_site_id=51.51.50.48.57.55`. **Only** use data from the main traffic light i.e. `stream_site_id=51.51.50.48.57.54`.
+- The `oid` column is used to distinguish between different types of messages. We are only interested in stage confirmation bits. The message contains information of the current stage being served at the traffic light. The oid is `3.6.1.4.1.13267.3.2.5.1.1.3` .
+- The timestamp column indicates the time when the message was received. This is [Unix time](https://en.wikipedia.org/wiki/Unix_time).
+- The value of a message can be found in the `value` column. Stage information is given in hex and ascii. More information will follow in the questions section.
+
 ## Challenge Questions/Problems
 
-### 1. Query data from s3
-
-Dumps of both the camera vehicle counts dataset and the controller's dataset have been uploaded to a public bucket on S3. 
-
-The vehicle counts dataset is available at the following address: 
-
-<span style="color: blue;"> s3://quebit-challenge/vehicle_counts.json </span>
-
-The controller's dataset is available at the following address:
-
-<span style="color: blue;"> s3://quebit-challenge/controller.json</span>
-
-You need only use the data in the following timeframe: 
-Start: `2024-03-08T17:00:00+02:00` End: `2024-03-08T18:00:00+02:00`
-
-Both of these `.json` files are large, so it's recommended to query only the required subset. Consider using the AWS `SELECT` method to accomplish this task.
-
+### 1. Traffic volume
 
 #### 1.1. Query vehicle counts
-Let's start by querying the vehicle dataset for vehicle counts over the previously specified timeframe as well as for a subset of the detection zones. Remember that some turning movements are counted by multiple cameras and detection zones. The table below specifies which detection zones may be ignored for each of the cameras:
-
+Use Peewee to write a query to select rows from the `individual_data` table within a timeframe of `2024-03-08T06:00:00+02:00` to `2024-03-08T17:00:00+02:00`. Recall that some turning movements are counted by multiple cameras and detector zones. The table below specifies which detector zones should be ignored for each of the cameras.
 
 | Camera IP Address | Zones to ignore |
 |---------------|-------------|
@@ -255,28 +246,49 @@ Let's start by querying the vehicle dataset for vehicle counts over the previous
 | 172.30.15.54  | 3, 4, 5, 6  |
 | 172.30.15.55  | 7, 8        |
 
+#### 1.2 Map detector zones to turning movements
+Use the information provided in the previous section to map the remaining detector zones of each camera to a turning movement (route). Use Python functiona, classes or structures of your choice to obtain the resultant turning movements. Do not attempt to add the route information to the remote DB. It should sufficient to store it locally in memory.
 
-Only select rows within the specified time frame - `2024-03-08T17:00:00+02:00` to `2024-03-08T18:00:00+02:00`. Use the `time` column to make a selection based on time. The time format here is [ISO_8601](https://en.wikipedia.org/?title=ISO_8601).
+#### 1.3 Aggregate counts
+It makes sense to resample these counts and look volumes over a longer time frame. Resample the data in the `individual_data` table to get hourly counts for each route in the previously specified time frame. Answer the following questions:
+- Create a plot that describes the distribution of hourly vehicle counts for each turning movement. 
+- What hour of the day had peak traffic (maximum counts) on the `somersetwest_to_technopark` turning movment? What was the volume of cars for that hour?
 
-#### 1.2. Query stage informations
-Query the `controller.json` file for information regarding stage changes. Rows where the `oid` column have a value of `3.6.1.4.1.13267.3.2.5.1.1.3` contain information regarding stage selections. Again select only information within the specified timeframe. Use the `timestamp` column to select rows based time. Keep in mind that the format here is [Unix time](https://en.wikipedia.org/wiki/Unix_time).
+#### 1.4 Investigate speed information
+1.4.1 We are interseted in the speed of vehicles driving from Stellenbosch to Somerset West i.e. `stellenbosch_to_somersetwest` turning movement. Create a visualiation to give insight to this distribtion. Explain why you have chosen the specific data visualation.
+
+1.4.2 What are some basic approaches to outlier detection? Implement an approach to identify outlier vehicle speeds.
+
+### 2. Traffic light
+
+#### 2.1 Query stage information
+Query the `trap_table` Table for information regarding stage changes. Recall that rows where the `oid` column have a value of `3.6.1.4.1.13267.3.2.5.1.1.3` contain information regarding stage selections. Again select only information within the specified timeframe. Use the `timestamp` column to select rows based time. Keep in mind that the format here is [Unix time](https://en.wikipedia.org/wiki/Unix_time).
+
+#### 2.2 Convert stage values to integers
+Recall that the values of stages are given in hex or ascii. Use the `value` column to obtain these values and use the `value_type` column to determine if the value was given as a hex or a string. There are a few steps required converting these values to human readable integers i.e. (stage 1 to stage 7). The process is as follow:
+- Convert the value to a binary number
+- The resultant binary number should always be one hot encoded i.e. only one bit is 1 and the rest is zero. Except for stage 0 where all bits 0. Stage 0 also indicates an intergreen stage i.e. the traffic light is transitioning to the next green stage. The index of the one hot bit is the stage number. For example (`0000 0001` -> 1, `0000 0010` -> 2, `0000 0100` -> 3 and so on)
+  
+You can test your function by using the following table:
+| Value Type | Value         | Stage Number |
+|------------|-------------|--------------|
+| HEX-String | 0x00        | 0            |
+| HEX-String | 0x01        | 1            |
+| HEX-String | 0x02        | 2            |
+| HEX-String | 0x04        | 3            |
+| HEX-String | 0x08        | 4            |
+| HEX-String | 0x10        | 5            |
+| STRING     | " "         | 6            |
+| STRING     | @           | 7            |
 
 
-### 2. Data processing and analysis
+#### 2. Visualise stage information
 
-#### 2.1. Vehicle counts
-
-- Create a bar plot of the total volume of cars served for each turning movement
-- Create a rolling mean line plot of 30-second throughput for each turning movement. Here, throughput refers to the number of vehicles passing through the intersection.
-- Construct a suitable visual to provide insight on the gap time distribution. Here, gap time refers to the time between consecutive vehicle counts.
-
-#### 2.2. Traffic light visualization
-
-- Visualize the distribution of green time extensions for each stage. Report and describe these distributions.
+- Visualize the distribution of green time extensions for each stage.
 - Create a transition matrix to showcase the frequency at which the traffic light switched from one stage to another. After obtaining the transition matrix, use this matrix to construct a heatmap of the stage transitions.
+  
 
-#### 2.3 Vehicle counts and traffic light stages joined
-
+### 3 Join Vehicle counts and stages
 - Implement a suitable method to combine (join) staging data with the vehicle count dataset. The resulting dataframe should assign a stage to each counted vehicle, indicating the stage that was active when the vehicle was observed.
 
 - Both Stage 2 and Stage 4 served vehicles traveling from Somerset West to Technopark. Determine which stage served the most vehicles and which stage had the highest vehicle rate.
@@ -286,6 +298,8 @@ Query the `controller.json` file for information regarding stage changes. Rows w
 - Analyze green time utilization. Identify the stage with the longest duration during which no vehicles were served, and report the duration of this period.
 
 
-### 3. Create a simulation based on vehicle counts and traffic light stage data (bonus question)
-   
-In this question you are going to create a digital twin of the scenario using the provided dataset. We've already provided the simulation and dependencies. You need to create two `.xml` files. The first will be responsible for generating traffic within the simulation. The second `.xml` file is going to dictate the stage of the traffic light... 
+### 4. General questions:
+1. What is a basic approach to approximate/estimate the distribution of a discrete random variable?
+2. What are some approaches to visualising high-dimensional data?
+3. Suppose you fit a linear regression model to some training data and find that the model performs very well on this data (in the sense of having a small mean squared error), but when you evaluate the model on some held-out validation set, you find that the model performs very poorly (in the sense of having a very large mean squared error). What can you do to improve the generalisation of the model to unseen data?
+4. Suppose you have a feature x and a response variable y that you wish to model using a linear regression model. Furthermore, suppose you visualize the relationship between x and y and observe a highly non-linear relationship, in which case a simple linear regression model will surely fail to provide an accurate fit to the data. How can you improve the model to account for the non-linearity, while still using a linear model?
