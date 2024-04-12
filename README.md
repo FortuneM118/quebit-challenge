@@ -31,7 +31,7 @@ When completing this assignment, please adhere to the requirements listed below.
 
 - **Statistical Insights**: Provide insightful descriptions of the results and graphs obtained during the challenge. That is, your solutions should contain explanations of all results produced.
 
-- **Clear Instructions for Execution**: Include clear instructions in your final submission on how to install and run your code. Your submission can be in the form of a Jupyter Notebook or a Python script, but it should be executable by following the provided instructions. Specify the version of Python required to run your code. Note the use of `pip freeze` or `pipreqs` for generating a .txt file containing the requirements for executing your code.
+- **Clear Instructions for Execution**: Include clear instructions in your final submission on how to install and run your code. Your submission can be in the form of a Jupyter Notebook or a Python script, but it should be executable by following the provided instructions. Specify the version of Python required to run your code. Note the use of `pip freeze` or `pipreqs` for generating a `.txt` file containing the requirements for executing your code.
 
 
 # Submitting your solutions
@@ -86,7 +86,6 @@ We have four FLIR cameras deployed at our data-collection site. These are mainly
 
 Counting zones are strategically placed to count the different turning movements at the intersection. Each row in this table represents a vehicle that was counted. The `detectorZone` column indicate the zone number where the vehicle was counted and the `time` column can be used to get the timestamp for when the count was made. Note that the counts of all 4 cameras are combined in this one table. 
 
-There are 12 turning movements we want to track:
 The counting zones (red boxes in the above figures) are strategically placed to count the different turning movements at the intersection. There are 12 turning movements we want to track:
 
 ```
