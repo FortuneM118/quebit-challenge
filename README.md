@@ -39,11 +39,10 @@ When completing this assignment, please adhere to the requirements listed below.
 
 - **GitHub submission**:
 The easiest method is to fork this repository on GitHub and then clone it to your local machine.
-- **Non-GitHub aubmission**:
+- **Non-GitHub submission**:
 If you are not using GitHub, please ensure that your repository is hosted in a location where we can easily access it.
-- **Work on the ahallenge**:
-Throughout the challenge, commit regularly to document your progress. Strive for structured, meaningful commits, with each one adding functionality in a coherent manner. Where possible, aim to keep individual commits small and concise, and try to break up your solutions into several small commits.
-- **Submission link**:
+- **Work on the challenge**:
+Throughout the challenge, commit regularly to document your progress. Strive for structured and meaningful commits, with each commit adding functionality in a coherent manner. Where possible, aim to keep individual commits small and concise, and try to break up your solutions into several small commits. Although not necessary, have a look at the [gitmoji tags](https://gitmoji.dev/) which are used to add an emoji to commit messages for ease of readability (an example commit message that was used in one of our Quebit packages: `git commit -m ":bug: fix wandb artifact problem related to issue #372"`)
 Once you have completed the challenge, email us a link to your repository at: cobus.louw@bytefuse.ai.
 
 <span style="color: red;">NOTE: </span> **Be sure to watch the repo for bug fixes**
@@ -55,7 +54,7 @@ Quebit is currently deployed at an intersection in Stellenbosch, where we are co
 ## Background
 
 ## Database
-A sample dataset has been uploaded to a database on AWS. We will email you the information to connect to the DB. The database is readonly and you should not attempt to write to the database. You can connect to the database using a tool like DBeaver or SQLConnect or any other tool of your choice. Use the tool to inspect the structure of the database and the tables in the database. Using Python and the Peewee Python package create database models that represent the structure of the database tables. Use these models to read and manupulate the data to complete the tasks below. Avoid typing out RAW SQL queries in your code. More background on the data follows in the next two sections.  
+A sample dataset has been uploaded to a database on AWS. We will email you the information to connect to the DB. The database is equiped with 'readonly' permissions and you should not attempt to write to the database. You can connect to the database using a tool like DBeaver, pgAdmin4, SQLConnect, or any other tool of your choice. Use the tool to inspect the structure of the database and the tables in the database. Using Python and the Peewee Python package create database models that represent the structure of the database tables. Use these models to read and manupulate the data to complete the tasks below. Avoid typing out RAW SQL queries in your code. More background on the data follows in the next two sections.  
 
 ### Cameras
 
@@ -179,6 +178,12 @@ The following stages are currently defined at the site:
   </div>
 </div>
 
+As an example, stage 1 above serves each of the following turning movements:
+  - vehicles entering Technopark from Stellenbosch
+  - vehicles driving toward Somerset West from Stellenbosch, and
+  - several turning movements for serving pedestrian traffic
+
+
 The YAML below defines the turning movements that are served by each of the above stages:
 
 ```yaml
@@ -225,10 +230,10 @@ stage_route_map:
 ```
 ---
 
-Information from the traffic light is streamed using a SNMP Trap. The stream contains a variety of different messages. This includes when the traffic light changed its stage, detector faults, detector readings etc. Data regarding the traffic light are located in the `trap_table`. A few important things to note:
+Information from the traffic light is streamed using a SNMP Trap. The stream contains a variety of different messages. This includes information on when the traffic light changed stages, detector faults, detector readings etc. Data regarding the traffic light are located in the `trap_table`. A few important things to note:
 
 - There are actually two traffic lights at this site. A main traffic light with `stream_site_id=51.51.50.48.57.54` and a secondary traffic light that controls a pedestrian crossing with `stream_site_id=51.51.50.48.57.55`. **Only** use data from the main traffic light i.e. `stream_site_id=51.51.50.48.57.54`.
-- The `oid` column is used to distinguish between different types of messages. We are only interested in stage confirmation bits. The message contains information of the current stage being served at the traffic light. The oid is `3.6.1.4.1.13267.3.2.5.1.1.3` .
+- The `oid` column is used to distinguish different types of messages. We are only interested in stage confirmation bits. The message contains information of the current stage being served at the traffic light. The oid is `3.6.1.4.1.13267.3.2.5.1.1.3` .
 - The timestamp column indicates the time when the message was received. This is [Unix time](https://en.wikipedia.org/wiki/Unix_time).
 - The value of a message can be found in the `value` column. Stage information is given in hex and ascii. More information will follow in the questions section.
 
@@ -237,7 +242,7 @@ Information from the traffic light is streamed using a SNMP Trap. The stream con
 ### 1. Traffic volume
 
 #### 1.1. Query vehicle counts
-Use Peewee to write a query to select rows from the `individual_data` table within a timeframe of `2024-03-08T06:00:00+02:00` to `2024-03-08T17:00:00+02:00`. Recall that some turning movements are counted by multiple cameras and detector zones. The table below specifies which detector zones should be ignored for each of the cameras.
+Use Peewee to write a query to select rows from the `individual_data` table within a timeframe of `2024-03-08T06:00:00+02:00` to `2024-03-08T17:00:00+02:00`. Recall that some turning movements are counted by multiple cameras and detector zones. The table below specifies the detector zones that should be ignored for each of the cameras.
 
 | Camera IP Address | Zones to ignore |
 |---------------|-------------|
@@ -247,27 +252,27 @@ Use Peewee to write a query to select rows from the `individual_data` table with
 | 172.30.15.55  | 7, 8        |
 
 #### 1.2 Map detector zones to turning movements
-Use the information provided in the previous section to map the remaining detector zones of each camera to a turning movement (route). Use Python functiona, classes or structures of your choice to obtain the resultant turning movements. Do not attempt to add the route information to the remote DB. It should sufficient to store it locally in memory.
+Use the information provided in the previous section to map the remaining detector zones of each camera to a turning movement (route). Use Python functions, classes or structures of your choice to obtain the resulting turning movements. Do not attempt to add the route information to the remote DB. It should be sufficient to store it locally in memory.
 
 #### 1.3 Aggregate counts
-It makes sense to resample these counts and look volumes over a longer time frame. Resample the data in the `individual_data` table to get hourly counts for each route in the previously specified time frame. Answer the following questions:
+It is sensible to resample these counts to look at volumes over longer timeframes. Resample the data in the `individual_data` table to obtain hourly counts for each route in the previously specified timeframe. Answer the following questions:
 - Create a plot that describes the distribution of hourly vehicle counts for each turning movement. 
 - What hour of the day had peak traffic (maximum counts) on the `somersetwest_to_technopark` turning movment? What was the volume of cars for that hour?
 
 #### 1.4 Investigate speed information
-1.4.1 We are interseted in the speed of vehicles driving from Stellenbosch to Somerset West i.e. `stellenbosch_to_somersetwest` turning movement. Create a visualiation to give insight to this distribtion. Explain why you have chosen the specific data visualation.
+1.4.1 We are interseted in the speed of vehicles driving from Stellenbosch to Somerset West i.e. `stellenbosch_to_somersetwest` turning movement. Create a suitable visualization to provide insight into this distribtion. Explain why you have chosen the specific data visualization.
 
-1.4.2 What are some basic approaches to outlier detection? Implement an approach to identify outlier vehicle speeds.
+1.4.2 What are some basic approaches to outlier detection? Implement some method to detect potential outliers in terms of vehicle speed. (Feel free to make distributional assumptions on vehicle speed for simplicity).
 
 ### 2. Traffic light
 
 #### 2.1 Query stage information
-Query the `trap_table` Table for information regarding stage changes. Recall that rows where the `oid` column have a value of `3.6.1.4.1.13267.3.2.5.1.1.3` contain information regarding stage selections. Again select only information within the specified timeframe. Use the `timestamp` column to select rows based time. Keep in mind that the format here is [Unix time](https://en.wikipedia.org/wiki/Unix_time).
+Query the `trap_table` Table for information regarding stage changes. Recall that rows where the `oid` column have a value of `3.6.1.4.1.13267.3.2.5.1.1.3` contain information regarding stage selections. Again select only information within the specified timeframe. Use the `timestamp` column to select rows that fall within this timeframe. Keep in mind that the format here is [Unix time](https://en.wikipedia.org/wiki/Unix_time).
 
 #### 2.2 Convert stage values to integers
-Recall that the values of stages are given in hex or ascii. Use the `value` column to obtain these values and use the `value_type` column to determine if the value was given as a hex or a string. There are a few steps required converting these values to human readable integers i.e. (stage 1 to stage 7). The process is as follow:
+Recall that the values of stages are given in hex or ascii. Use the `value` column to obtain these values and use the `value_type` column to determine if the value was given as a hex or a string. A few steps are required for converting these values to human-readable integers (e.g. stage 1 to stage 7). The steps are as follows:
 - Convert the value to a binary number
-- The resultant binary number should always be one hot encoded i.e. only one bit is 1 and the rest is zero. Except for stage 0 where all bits 0. Stage 0 also indicates an intergreen stage i.e. the traffic light is transitioning to the next green stage. The index of the one hot bit is the stage number. For example (`0000 0001` -> 1, `0000 0010` -> 2, `0000 0100` -> 3 and so on)
+- The resulting binary number should always be one-hot encoded; that is, only a single bit should take on the value 1, and the remaining bits take on the value 0 (with the exception of stage 0 where all bits take on a value of 0). Stage 0 also indicates an intergreen stage, i.e. the traffic light is transitioning from one green stage to the next. The index of the one-hot-encoded bit is the stage number. For example (`0000 0001` -> 1, `0000 0010` -> 2, `0000 0100` -> 3 and so on)
   
 You can test your function by using the following table:
 | Value Type | Value         | Stage Number |
@@ -285,7 +290,7 @@ You can test your function by using the following table:
 #### 2. Visualise stage information
 
 - Visualize the distribution of green time extensions for each stage.
-- Create a transition matrix to showcase the frequency at which the traffic light switched from one stage to another. After obtaining the transition matrix, use this matrix to construct a heatmap of the stage transitions.
+- Create a transition matrix to showcase the frequency at which the traffic light switched from one stage to another (i.e. a matrix containing the frequency of stage transitions from stage $i$ to stage $j$ for each value of $i, j = 1, 2, \dots, 7, i\not=j$). After obtaining the transition matrix, use this matrix to construct a heatmap of the stage transition frequencies.
   
 
 ### 3 Join Vehicle counts and stages
@@ -300,6 +305,6 @@ You can test your function by using the following table:
 
 ### 4. General questions:
 1. What is a basic approach to approximate/estimate the distribution of a discrete random variable?
-2. What are some approaches to visualising high-dimensional data?
+2. What are some approaches to visualizing high-dimensional data?
 3. Suppose you fit a linear regression model to some training data and find that the model performs very well on this data (in the sense of having a small mean squared error), but when you evaluate the model on some held-out validation set, you find that the model performs very poorly (in the sense of having a very large mean squared error). What can you do to improve the generalisation of the model to unseen data?
-4. Suppose you have a feature x and a response variable y that you wish to model using a linear regression model. Furthermore, suppose you visualize the relationship between x and y and observe a highly non-linear relationship, in which case a simple linear regression model will surely fail to provide an accurate fit to the data. How can you improve the model to account for the non-linearity, while still using a linear model?
+4. Suppose you have a feature $x$ and a response variable $y$ that you wish to model using a linear regression model. Furthermore, suppose you visualize the relationship between $x$ and $y$ and observe a highly non-linear relationship, in which case a simple linear regression model will surely fail to provide an accurate fit to the data. How can you improve the model to account for the non-linearity, while still using a linear model?
